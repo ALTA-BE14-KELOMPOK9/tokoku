@@ -142,3 +142,20 @@ func (mb *MenuBarang) UbahStokBarang(id int, quantity int, condition string) (in
 
 	return int(rowAffected), nil
 }
+
+func (mb *MenuBarang) CariBarang(nama string) (int, error) {
+	stmt, err := mb.DB.Prepare("SELECT id_barang FROM barang WHERE nama = ?")
+	if err != nil {
+		log.Println("PREPARE CARI BARANG STATEMENT ERROR: ", err.Error())
+		return 0, errors.New("gagal cari barang")
+	}
+
+	var id int
+	err = stmt.QueryRow(nama).Scan(&id)
+	if err != nil {
+		log.Println("SCAN CARI BARANG STATEMENT ERROR: ", err.Error())
+		return 0, errors.New("data barang tidak ditemukan")
+	}
+
+	return id, nil
+}
