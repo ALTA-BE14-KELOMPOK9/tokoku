@@ -1,4 +1,4 @@
-### TokoKu
+# TokoKu
 
 ...
 
@@ -32,7 +32,7 @@
 
 ## Flow
 
-# Admin
+### Admin
 
 1. Input 1 untuk login
 2. Input username = admin dan password = admin
@@ -63,7 +63,7 @@
 9. Input 9 untuk logout
 10. Input 0 untuk exit program
 
-# User
+### User
 
 1. Input 1 untuk login
 2. Input username dan password sesuai yang ada pada database
