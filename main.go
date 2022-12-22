@@ -281,7 +281,7 @@ func main() {
 					fmt.Println("6. Tambah Customer")
 					fmt.Println("7. Tampil List Nota")
 					fmt.Println("8. Buat Nota Transaksi")
-					fmt.Println("0. Logout")
+					fmt.Println("9. Logout")
 					fmt.Print("Masukkan Input Menu: ")
 					fmt.Scanln(&inputMenu)
 
@@ -312,7 +312,7 @@ func main() {
 
 						fmt.Print("Masukkan Nama Barang: ")
 						fmt.Scanln(&product.Nama)
-						fmt.Print("Masukkan Nama Barang: ")
+						fmt.Print("Masukkan Jumlah Barang: ")
 						fmt.Scanln(&product.Stok)
 						product.IDPegawai = employee.ID
 
@@ -512,7 +512,7 @@ func main() {
 							fmt.Println("Gagal menambahkan transaksi barang!")
 						}
 
-					case 0:
+					case 9:
 						isLogin = false
 						employee = pegawai.Pegawai{}
 					}
