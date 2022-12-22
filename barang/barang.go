@@ -66,7 +66,7 @@ func (mb *MenuBarang) CheckDuplicate(namaBarang string) bool {
 func (mb *MenuBarang) TambahBarang(barang Barang) (int, error) {
 	// Check apakah barang duplikat
 	if mb.CheckDuplicate(barang.Nama) {
-		log.Println("BARANG DIPLICATE")
+		log.Println("BARANG DUPLICATE")
 		return 0, errors.New("barang sudah pernah terdaftar")
 	}
 
@@ -158,4 +158,23 @@ func (mb *MenuBarang) CariBarang(nama string) (int, error) {
 	}
 
 	return id, nil
+}
+
+// Method hapus barang
+func (hp *MenuBarang) HapusBarang(id_barang int) (int, error) {
+
+	stmt, err := hp.DB.Prepare("delete from barang where id_barang=?")
+	if err != nil {
+		log.Println("Hapus Barang gagal: ", err.Error())
+		return 0, errors.New("gagal hapus barang")
+	}
+
+	result, err := stmt.Exec(id_barang)
+	if err != nil {
+		log.Println("Gagal hapus data", err.Error())
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	return int(rowsAffected), nil
+
 }

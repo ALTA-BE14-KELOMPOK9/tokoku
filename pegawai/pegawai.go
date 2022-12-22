@@ -40,3 +40,51 @@ func (mp *MenuPegawai) Login(username string, password string) (Pegawai, error) 
 
 	return pegawai, nil
 }
+
+// Method List Pegawai
+func (mp *MenuPegawai) ListPegawai() ([]Pegawai, error) {
+	stmt, err := mp.DB.Prepare("select * from pegawai")
+	if err != nil {
+		log.Println("Prepare list pegawai gagal: ", err.Error())
+		return []Pegawai{}, errors.New("prepare login gagal")
+	}
+
+	rows, err := stmt.Query()
+	if err != nil {
+		log.Println("Query list pegawai gagal: ", err.Error())
+		return nil, errors.New("gagal menampilkan list")
+	}
+
+	var listPegawai []Pegawai
+	for rows.Next() {
+		pegawai := Pegawai{}
+		err = rows.Scan(&pegawai.ID, &pegawai.Username, &pegawai.Password)
+		if err != nil {
+			log.Println("Scan List pegawai gagal: ", err.Error())
+			return nil, errors.New("data tidak ditemukan")
+		}
+
+		listPegawai = append(listPegawai, pegawai)
+	}
+
+	return listPegawai, nil
+}
+
+// Method Hapus Pegawai
+func (hp *MenuPegawai) HapusPegawai(id_pegawai int) (int, error) {
+
+	stmt, err := hp.DB.Prepare("delete from pegawai where id_pegawai=?")
+	if err != nil {
+		log.Println("Hapus pegawai gagal: ", err.Error())
+		return 0, errors.New("gagal hapus pegawai")
+	}
+
+	result, err := stmt.Exec(id_pegawai)
+	if err != nil {
+		log.Println("Gagal hapus data", err.Error())
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	return int(rowsAffected), nil
+
+}
