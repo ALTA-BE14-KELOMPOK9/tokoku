@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"log"
-	"time"
 )
 
 // Model Transaksi
@@ -14,7 +13,7 @@ type Transaksi struct {
 	IDCustomer   int
 	NamaPegawai  string
 	NamaCustomer string
-	CreatedDate  time.Time
+	CreatedDate  string
 }
 
 // Model Transaksi Barang
@@ -22,6 +21,7 @@ type TransaksiBarang struct {
 	IDTransaksi int
 	IDBarang    int
 	NamaBarang  string
+	Quantity    int
 }
 
 // Menu Transaksi
@@ -58,50 +58,8 @@ func (mt *MenuTransaksi) ListTransaksi() ([]Transaksi, error) {
 	return listTransaksi, nil
 }
 
-func (mt *MenuTransaksi) TambahTransaksi(idPegawai int, idCustomer int) (int, error) {
-	stmt, err := mt.DB.Prepare("INSERT INTO transaksi(id_pegawai, id_customer) VALUES(?, ?)")
-	if err != nil {
-		log.Println("PREPARE TAMBAH TRANSAKSI ERROR: ", err.Error())
-		return 0, errors.New("prepare tambah transaksi gagal")
-	}
-
-	result, err := stmt.Exec(idPegawai, idCustomer)
-	if err != nil {
-		log.Println("EXEC TAMBAH TRANSAKSI ERROR: ", err.Error())
-		return 0, errors.New("gagal menambahkan transaksi")
-	}
-
-	id, err := result.LastInsertId()
-	if err != nil {
-		return 0, errors.New("tambah transaksi gagal")
-	}
-
-	return int(id), nil
-}
-
-func (mt *MenuTransaksi) TambahTransaksiBarang(idTransaksi int, idBarang int) error {
-	stmt, err := mt.DB.Prepare("INSERT INTO transaksi_barang(id_transaksi, id_barang) VALUES(?, ?)")
-	if err != nil {
-		log.Println("PREPARE TAMBAH TRANSAKSI BARANG ERROR: ", err.Error())
-		return errors.New("prepare tambah transaksi barang gagal")
-	}
-
-	_, err = stmt.Exec(idTransaksi, idBarang)
-	if err != nil {
-		log.Println("EXEC TAMBAH TRANSAKSI BARANG ERROR: ", err.Error())
-		return errors.New("gagal menambahkan transaksi barang")
-	}
-
-	// rowAffected, err := result.RowsAffected()
-	// if err != nil {
-	// 	return errors.New("tambah transaksi barang gagal")
-	// }
-
-	return nil
-}
-
 func (mt *MenuTransaksi) ListTransaction() ([]Transaksi, error) {
-	stmt, err := mt.DB.Prepare("SELECT transaksi.id_transaksi, pegawai.id_pegawai, pegawai.username, customer.id_customer, customer.username, transaksi.created_date FROM transaksi JOIN pegawai ON pegawai.id_pegawai = transaksi.id_pegawai JOIN customer ON customer.id_customer = transaksi.id_customer")
+	stmt, err := mt.DB.Prepare("SELECT transaksi.id_transaksi, pegawai.id_pegawai, pegawai.username, customer.id_customer, customer.username, transaksi.created_date FROM transaksi JOIN pegawai ON pegawai.id_pegawai = transaksi.id_pegawai JOIN customer ON customer.id_customer = transaksi.id_customer ORDER BY transaksi.created_date ASC")
 	if err != nil {
 		log.Println("PREPARE LIST TRANSACTION ERROR: ", err.Error())
 		return nil, errors.New("prepare list transaksi gagal")
@@ -128,7 +86,7 @@ func (mt *MenuTransaksi) ListTransaction() ([]Transaksi, error) {
 }
 
 func (mt *MenuTransaksi) ListItemTransaction(id int) ([]TransaksiBarang, error) {
-	stmt, err := mt.DB.Prepare("SELECT tb.id_transaksi, b.id_barang, b.nama FROM transaksi_barang tb JOIN barang b ON b.id_barang = tb.id_barang WHERE tb.id_transaksi = ?")
+	stmt, err := mt.DB.Prepare("SELECT tb.id_transaksi, b.id_barang, b.nama, tb.quantity FROM transaksi_barang tb JOIN barang b ON b.id_barang = tb.id_barang WHERE tb.id_transaksi = ?")
 	if err != nil {
 		log.Println("PREPARE LIST ITEM TRANSACTION ERROR: ", err.Error())
 		return nil, errors.New("prepare list transaksi barang gagal")
@@ -143,7 +101,7 @@ func (mt *MenuTransaksi) ListItemTransaction(id int) ([]TransaksiBarang, error) 
 	var listTransaksiBarang []TransaksiBarang
 	for rows.Next() {
 		transaksiBarang := TransaksiBarang{}
-		err := rows.Scan(&transaksiBarang.IDTransaksi, &transaksiBarang.IDBarang, &transaksiBarang.NamaBarang)
+		err := rows.Scan(&transaksiBarang.IDTransaksi, &transaksiBarang.IDBarang, &transaksiBarang.NamaBarang, &transaksiBarang.Quantity)
 		if err != nil {
 			return nil, err
 		}
@@ -154,26 +112,6 @@ func (mt *MenuTransaksi) ListItemTransaction(id int) ([]TransaksiBarang, error) 
 	return listTransaksiBarang, nil
 }
 
-// Method hapus transaksi
-func (mt *MenuTransaksi) HapusTransaksi(id_transaksi int) (int, error) {
-
-	stmt, err := mt.DB.Prepare("delete from transaksi where id_transaksi=?")
-	if err != nil {
-		log.Println("Hapus Transaksi gagal: ", err.Error())
-		return 0, errors.New("gagal hapus transaksi")
-	}
-
-	result, err := stmt.Exec(id_transaksi)
-	if err != nil {
-		log.Println("Gagal hapus data", err.Error())
-	}
-
-	rowsAffected, err := result.RowsAffected()
-	return int(rowsAffected), nil
-
-}
-
-// Method list transaksi barang
 func (mt *MenuTransaksi) ListTransaksiBarang() ([]TransaksiBarang, error) {
 	stmt, err := mt.DB.Prepare("select * from transaksi_barang")
 	if err != nil {
@@ -202,7 +140,59 @@ func (mt *MenuTransaksi) ListTransaksiBarang() ([]TransaksiBarang, error) {
 	return listTransaksiBarang, nil
 }
 
-// Method hapus transaksi barang
+func (mt *MenuTransaksi) TambahTransaksi(idPegawai int, idCustomer int) (int, error) {
+	stmt, err := mt.DB.Prepare("INSERT INTO transaksi(id_pegawai, id_customer) VALUES(?, ?)")
+	if err != nil {
+		log.Println("PREPARE TAMBAH TRANSAKSI ERROR: ", err.Error())
+		return 0, errors.New("prepare tambah transaksi gagal")
+	}
+
+	result, err := stmt.Exec(idPegawai, idCustomer)
+	if err != nil {
+		log.Println("EXEC TAMBAH TRANSAKSI ERROR: ", err.Error())
+		return 0, errors.New("gagal menambahkan transaksi")
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, errors.New("tambah transaksi gagal")
+	}
+
+	return int(id), nil
+}
+
+func (mt *MenuTransaksi) TambahTransaksiBarang(idTransaksi int, idBarang int, quantity int) error {
+	stmt, err := mt.DB.Prepare("INSERT INTO transaksi_barang(id_transaksi, id_barang, quantity) VALUES(?, ?, ?)")
+	if err != nil {
+		log.Println("PREPARE TAMBAH TRANSAKSI BARANG ERROR: ", err.Error())
+		return errors.New("prepare tambah transaksi barang gagal")
+	}
+
+	_, err = stmt.Exec(idTransaksi, idBarang, quantity)
+	if err != nil {
+		log.Println("EXEC TAMBAH TRANSAKSI BARANG ERROR: ", err.Error())
+		return errors.New("gagal menambahkan transaksi barang")
+	}
+	return nil
+}
+
+func (mt *MenuTransaksi) HapusTransaksi(id_transaksi int) (int, error) {
+
+	stmt, err := mt.DB.Prepare("delete from transaksi where id_transaksi=?")
+	if err != nil {
+		log.Println("Hapus Transaksi gagal: ", err.Error())
+		return 0, errors.New("gagal hapus transaksi")
+	}
+
+	result, err := stmt.Exec(id_transaksi)
+	if err != nil {
+		log.Println("Gagal hapus data", err.Error())
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	return int(rowsAffected), nil
+}
+
 func (mt *MenuTransaksi) HapusTransaksiBarang(id_transaksi int) (int, error) {
 
 	stmt, err := mt.DB.Prepare("delete from transaksi_barang where id_transaksi=?")
@@ -218,5 +208,4 @@ func (mt *MenuTransaksi) HapusTransaksiBarang(id_transaksi int) (int, error) {
 
 	rowsAffected, err := result.RowsAffected()
 	return int(rowsAffected), nil
-
 }
