@@ -4,7 +4,6 @@ import (
 	"database/sql"
 	"errors"
 	"log"
-	"time"
 )
 
 // Model Barang
@@ -14,7 +13,7 @@ type Barang struct {
 	Nama        string
 	Stok        int
 	NamaPegawai string
-	CreatedDate time.Time
+	CreatedDate string
 }
 
 // Menu Barang
