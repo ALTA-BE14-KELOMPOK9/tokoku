@@ -118,9 +118,9 @@ func main() {
 						}
 
 						if hapusPegawai > 0 {
-							fmt.Println("Hapus barang berhasil")
+							fmt.Println("Hapus pegawai berhasil")
 						} else {
-							fmt.Println("Hapus barang gagal")
+							fmt.Println("Hapus pegawai gagal")
 						}
 					// List dan Hapus Data Barang
 					case 3:
@@ -179,20 +179,20 @@ func main() {
 						fmt.Println()
 						fmt.Println("Total Data: ", len(listTransaksi))
 
-						// Fitur menghapus barang
-						var id_barang int
-						fmt.Print("Masukkan ID Barang yang akan dihapus: ")
-						fmt.Scanln(&id_barang)
+						// Fitur menghapus transaksi
+						var id_transaksi int
+						fmt.Print("Masukkan ID Transaksi yang akan dihapus: ")
+						fmt.Scanln(&id_transaksi)
 
-						hapusBarang, err := menuBarang.HapusBarang(id_barang)
+						hapusTransaksi, err := menuTransaksi.HapusTransaksi(id_transaksi)
 						if err != nil {
 							fmt.Println(err)
 						}
 
-						if hapusBarang > 0 {
-							fmt.Println("Hapus barang berhasil")
+						if hapusTransaksi > 0 {
+							fmt.Println("Hapus transaksi berhasil")
 						} else {
-							fmt.Println("Hapus barang gagal")
+							fmt.Println("Hapus transaksi gagal")
 						}
 
 					// logout
