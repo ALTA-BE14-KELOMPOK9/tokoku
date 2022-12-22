@@ -37,7 +37,7 @@ func ReadConfig() *Config {
 
 func OpenConnection(c Config) *sql.DB {
 	// format source username:password@tcp(host:port)/databaseName
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", c.DBUSER, c.DBPASS, c.DBHOST, c.DBPORT, c.DBNAME)
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", c.DBUSER, c.DBPASS, c.DBHOST, c.DBPORT, c.DBNAME)
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		fmt.Println("Terjadi error", err.Error())
