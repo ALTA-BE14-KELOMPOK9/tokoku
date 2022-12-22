@@ -213,6 +213,22 @@ func main() {
 						fmt.Println()
 						fmt.Println("Total Data: ", len(listCustomer))
 
+						// Hapus Customer
+						var id_customer int
+						fmt.Print("Masukkan ID customer yang akan dihapus: ")
+						fmt.Scanln(&id_customer)
+
+						hapusCustomer, err := menuCustomer.HapusCustomer(id_customer)
+						if err != nil {
+							fmt.Println(err)
+						}
+
+						if hapusCustomer > 0 {
+							fmt.Println("Hapus customer berhasil")
+						} else {
+							fmt.Println("Hapus customer gagal")
+						}
+
 					// logout
 					case 9:
 						isLogin = false

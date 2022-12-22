@@ -45,7 +45,7 @@ func (mt *MenuTransaksi) ListTransaksi() ([]Transaksi, error) {
 
 	rows, err := stmt.Query()
 	if err != nil {
-		log.Println("Query list pegawai gagal: ", err.Error())
+		log.Println("Query list transaksi gagal: ", err.Error())
 		return nil, errors.New("gagal menampilkan list")
 	}
 
@@ -180,15 +180,15 @@ func (mt *MenuTransaksi) ListNotaTransaksi() ([]Nota, error) {
 }
 
 // Method hapus transaksi
-func (mt *MenuTransaksi) HapusTransaksi(id_barang int) (int, error) {
+func (mt *MenuTransaksi) HapusTransaksi(id_transaksi int) (int, error) {
 
 	stmt, err := mt.DB.Prepare("delete from transaksi where id_transaksi=?")
 	if err != nil {
-		log.Println("Hapus Barang gagal: ", err.Error())
-		return 0, errors.New("gagal hapus barang")
+		log.Println("Hapus Transaksi gagal: ", err.Error())
+		return 0, errors.New("gagal hapus transaksi")
 	}
 
-	result, err := stmt.Exec(id_barang)
+	result, err := stmt.Exec(id_transaksi)
 	if err != nil {
 		log.Println("Gagal hapus data", err.Error())
 	}

@@ -100,3 +100,22 @@ func (mc *MenuCustomer) CariCustomer(name string) (int, error) {
 
 	return id, nil
 }
+
+// Method hapus customer
+func (hc *MenuCustomer) HapusCustomer(id_customer int) (int, error) {
+
+	stmt, err := hc.DB.Prepare("delete from customer where id_customer=?")
+	if err != nil {
+		log.Println("Hapus Barang gagal: ", err.Error())
+		return 0, errors.New("gagal hapus barang")
+	}
+
+	result, err := stmt.Exec(id_customer)
+	if err != nil {
+		log.Println("Gagal hapus data", err.Error())
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	return int(rowsAffected), nil
+
+}
