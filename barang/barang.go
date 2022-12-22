@@ -143,6 +143,7 @@ func (mb *MenuBarang) UbahStokBarang(id int, quantity int, condition string) (in
 	return int(rowAffected), nil
 }
 
+// Method cari barang
 func (mb *MenuBarang) CariBarang(nama string) (int, error) {
 	stmt, err := mb.DB.Prepare("SELECT id_barang FROM barang WHERE nama = ?")
 	if err != nil {
