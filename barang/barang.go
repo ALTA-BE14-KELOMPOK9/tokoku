@@ -3,7 +3,6 @@ package barang
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"log"
 	"time"
 )
@@ -112,32 +111,43 @@ func (mb *MenuBarang) UbahNamaBarang(id int, nama string) (int, error) {
 	return int(rowAffected), nil
 }
 
-func (mb *MenuBarang) UbahStokBarang(id int, quantity int, condition string) (int, error) {
-
-	if condition == "tambah" {
-		condition = "+"
-	} else if condition == "kurang" {
-		condition = "-"
-	} else {
-		return 0, errors.New("salah input condition")
-	}
-
-	query := fmt.Sprintf("UPDATE barang SET quantity = quantity %s ? WHERE id_barang = ?", condition)
-	stmt, err := mb.DB.Prepare(query)
+func (mb *MenuBarang) TambahStokBarang(id int, quantity int) (int, error) {
+	stmt, err := mb.DB.Prepare("UPDATE barang SET quantity = quantity + ? WHERE id_barang = ?")
 	if err != nil {
-		log.Println("PREPARE UBAH UPDATE BARANG STATEMENT ERROR: ", err.Error())
-		return 0, errors.New("prepare ubah update barang gagal")
+		log.Println("PREPARE TAMBAH STOK BARANG STATEMENT ERROR: ", err.Error())
+		return 0, errors.New("prepare tambah stok barang gagal")
 	}
 
 	result, err := stmt.Exec(quantity, id)
 	if err != nil {
-		log.Println("EXEC UBAH UPDATE BARANG STATEMENT ERROR: ", err.Error())
-		return 0, errors.New("ubah update barang gagal")
+		log.Println("EXEC TAMBAH STOK BARANG STATEMENT ERROR: ", err.Error())
+		return 0, errors.New("tambah stok barang gagal")
 	}
 
 	rowAffected, err := result.RowsAffected()
 	if err != nil {
-		return 0, errors.New("ubah update barang gagal")
+		return 0, errors.New("tambah stok barang gagal")
+	}
+
+	return int(rowAffected), nil
+}
+
+func (mb *MenuBarang) KurangiStokBarang(id int, quantity int) (int, error) {
+	stmt, err := mb.DB.Prepare("UPDATE barang SET quantity = quantity - ? WHERE id_barang = ?")
+	if err != nil {
+		log.Println("PREPARE KURANGI STOK BARANG STATEMENT ERROR: ", err.Error())
+		return 0, errors.New("prepare kurangi stok barang gagal")
+	}
+
+	result, err := stmt.Exec(quantity, id)
+	if err != nil {
+		log.Println("EXEC KURANGI STOK BARANG STATEMENT ERROR: ", err.Error())
+		return 0, errors.New("kurangi stok barang gagal")
+	}
+
+	rowAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, errors.New("kurangi stok barang gagal")
 	}
 
 	return int(rowAffected), nil
