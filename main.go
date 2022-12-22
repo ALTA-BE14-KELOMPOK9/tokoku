@@ -194,6 +194,24 @@ func main() {
 						} else {
 							fmt.Println("Hapus transaksi gagal")
 						}
+					// List dan Hapus data customer
+					case 5:
+						// List customer
+						listCustomer, err := menuCustomer.ListCustomer()
+						if err != nil {
+							fmt.Println(err)
+						}
+
+						fmt.Println()
+						fmt.Println("List Customer")
+						for _, customer := range listCustomer {
+							fmt.Println("-----------------------------------------------------")
+							fmt.Println("ID Transaksi: ", customer.ID)
+							fmt.Println("ID Pegawai: ", customer.IDPegawai)
+							fmt.Println("ID Customer: ", customer.Nama)
+						}
+						fmt.Println()
+						fmt.Println("Total Data: ", len(listCustomer))
 
 					// logout
 					case 9:
