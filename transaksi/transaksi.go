@@ -197,3 +197,51 @@ func (mt *MenuTransaksi) HapusTransaksi(id_transaksi int) (int, error) {
 	return int(rowsAffected), nil
 
 }
+
+// Method list transaksi barang
+func (mt *MenuTransaksi) ListTransaksiBarang() ([]TransaksiBarang, error) {
+	stmt, err := mt.DB.Prepare("select * from transaksi_barang")
+	if err != nil {
+		log.Println("Prepare list gagal: ", err.Error())
+		return nil, errors.New("prepare list gagal")
+	}
+
+	rows, err := stmt.Query()
+	if err != nil {
+		log.Println("Query list gagal: ", err.Error())
+		return nil, errors.New("gagal menampilkan list")
+	}
+
+	var listTransaksiBarang []TransaksiBarang
+	for rows.Next() {
+		transaksiBarang := TransaksiBarang{}
+		err = rows.Scan(&transaksiBarang.IDTransaksi, &transaksiBarang.IDBarang)
+		if err != nil {
+			log.Println("Scan List transaksi gagal: ", err.Error())
+			return nil, errors.New("data tidak ditemukan")
+		}
+
+		listTransaksiBarang = append(listTransaksiBarang, transaksiBarang)
+	}
+
+	return listTransaksiBarang, nil
+}
+
+// Method hapus transaksi barang
+func (mt *MenuTransaksi) HapusTransaksiBarang(id_transaksi int) (int, error) {
+
+	stmt, err := mt.DB.Prepare("delete from transaksi_barang where id_transaksi=?")
+	if err != nil {
+		log.Println("Hapus gagal: ", err.Error())
+		return 0, errors.New("gagal hapus")
+	}
+
+	result, err := stmt.Exec(id_transaksi)
+	if err != nil {
+		log.Println("Gagal hapus data", err.Error())
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	return int(rowsAffected), nil
+
+}

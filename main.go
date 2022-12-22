@@ -131,7 +131,7 @@ func main() {
 						}
 
 						fmt.Println()
-						fmt.Println("List Pegawai")
+						fmt.Println("List Barang")
 						for _, barang := range listBarang {
 							fmt.Println("-----------------------------------------------------")
 							fmt.Println("ID Barang: ", barang.ID)
@@ -167,7 +167,7 @@ func main() {
 						}
 
 						fmt.Println()
-						fmt.Println("List Pegawai")
+						fmt.Println("List Transaksi")
 						for _, transaksi := range listTransaksi {
 							fmt.Println("-----------------------------------------------------")
 							fmt.Println("ID Transaksi: ", transaksi.ID)
@@ -227,6 +227,38 @@ func main() {
 							fmt.Println("Hapus customer berhasil")
 						} else {
 							fmt.Println("Hapus customer gagal")
+						}
+					case 6:
+						// List transaksi barang
+						listTransaksiBarang, err := menuTransaksi.ListTransaksiBarang()
+						if err != nil {
+							fmt.Println(err)
+						}
+
+						fmt.Println()
+						fmt.Println("List ")
+						for _, transaksiBarang := range listTransaksiBarang {
+							fmt.Println("-----------------------------------------------------")
+							fmt.Println("ID Transaksi: ", transaksiBarang.IDTransaksi)
+							fmt.Println("ID Pegawai: ", transaksiBarang.IDBarang)
+						}
+						fmt.Println()
+						fmt.Println("Total Data: ", len(listTransaksiBarang))
+
+						// Fitur menghapus transaksi barang
+						var id_transaksi int
+						fmt.Print("Masukkan ID Transaksi yang akan dihapus: ")
+						fmt.Scanln(&id_transaksi)
+
+						hapusTransaksi, err := menuTransaksi.HapusTransaksi(id_transaksi)
+						if err != nil {
+							fmt.Println(err)
+						}
+
+						if hapusTransaksi > 0 {
+							fmt.Println("Hapus transaksi berhasil")
+						} else {
+							fmt.Println("Hapus transaksi gagal")
 						}
 
 					// logout
