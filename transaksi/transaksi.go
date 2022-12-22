@@ -9,25 +9,19 @@ import (
 
 // Model Transaksi
 type Transaksi struct {
-	ID          int
-	IDPegawai   int
-	IDCustomer  int
-	CreatedDate time.Time
+	ID           int
+	IDPegawai    int
+	IDCustomer   int
+	NamaPegawai  string
+	NamaCustomer string
+	CreatedDate  time.Time
 }
 
 // Model Transaksi Barang
 type TransaksiBarang struct {
 	IDTransaksi int
 	IDBarang    int
-}
-
-// Model Nota
-type Nota struct {
-	IDTransaksi  int
-	NamaPegawai  string
-	NamaCustomer string
-	CreatedDate  time.Time
-	Barang       []string
+	NamaBarang  string
 }
 
 // Menu Transaksi
@@ -106,77 +100,58 @@ func (mt *MenuTransaksi) TambahTransaksiBarang(idTransaksi int, idBarang int) er
 	return nil
 }
 
-func (mt *MenuTransaksi) ListNotaTransaksi() ([]Nota, error) {
-	stmtNota, err := mt.DB.Prepare("SELECT transaksi.id_transaksi, pegawai.username, customer.username, transaksi.created_date FROM transaksi_barang JOIN transaksi  ON transaksi.id_transaksi = transaksi_barang.id_transaksi JOIN barang  ON barang.id_barang = transaksi_barang.id_barang JOIN pegawai ON pegawai.id_pegawai = transaksi.id_pegawai JOIN customer ON customer.id_customer = transaksi.id_customer WHERE transaksi.id_transaksi = ?")
+func (mt *MenuTransaksi) ListTransaction() ([]Transaksi, error) {
+	stmt, err := mt.DB.Prepare("SELECT transaksi.id_transaksi, pegawai.id_pegawai, pegawai.username, customer.id_customer, customer.username, transaksi.created_date FROM transaksi JOIN pegawai ON pegawai.id_pegawai = transaksi.id_pegawai JOIN customer ON customer.id_customer = transaksi.id_customer")
 	if err != nil {
-		log.Println("PREPARE LIST NOTA TRANSAKSI ERROR: ", err.Error())
-		return nil, errors.New("prepare list nota transaksi gagal")
+		log.Println("PREPARE LIST TRANSACTION ERROR: ", err.Error())
+		return nil, errors.New("prepare list transaksi gagal")
 	}
 
-	stmtIDTransaksi, err := mt.DB.Prepare("SELECT id_transaksi FROM transaksi")
+	rows, err := stmt.Query()
 	if err != nil {
-		log.Println("PREPARE ID TRANSAKSI ERROR: ", err.Error())
-		return nil, errors.New("prepare id transaksi gagal")
+		log.Println("QUERY LIST TRANSACTION ERROR: ", err.Error())
+		return nil, errors.New("gagal menampilkan list nota  transaksi")
 	}
 
-	stmtBarang, err := mt.DB.Prepare("SELECT barang.nama FROM transaksi_barang JOIN transaksi ON transaksi.id_transaksi = transaksi_barang.id_transaksi JOIN barang ON barang.id_barang = transaksi_barang.id_barang WHERE transaksi.id_transaksi = ?")
-	if err != nil {
-		log.Println("PREPARE BARANG TRANSAKSI ERROR: ", err.Error())
-		return nil, errors.New("prepare barang transaksi gagal")
-	}
-
-	// QUERY ID TRANSAKSI
-	rowsIDTransaksi, err := stmtIDTransaksi.Query()
-	if err != nil {
-		log.Println("QUERY ID TRANSAKSI ERROR: ", err.Error())
-		return nil, errors.New("gagal menampilkan id transaksi")
-	}
-
-	var listNota []Nota
-
-	for rowsIDTransaksi.Next() {
-		var id int
-		// SCAN ID TRANSAKSI
-		err := rowsIDTransaksi.Scan(&id)
+	var listTransaksi []Transaksi
+	for rows.Next() {
+		transaksi := Transaksi{}
+		err := rows.Scan(&transaksi.ID, &transaksi.IDPegawai, &transaksi.NamaPegawai, &transaksi.IDCustomer, &transaksi.NamaCustomer, &transaksi.CreatedDate)
 		if err != nil {
 			return nil, err
 		}
 
-		// QUERY NOTA
-		rowsNota, err := stmtNota.Query(id)
-		if err != nil {
-			log.Println("QUERY LIST NOTA TRANSAKSI ERROR: ", err.Error())
-			return nil, errors.New("gagal menampilkan list nota  transaksi")
-		}
-
-		nota := Nota{}
-		for rowsNota.Next() {
-			// SCAN NOTA
-			err := rowsNota.Scan(&nota.IDTransaksi, &nota.NamaPegawai, &nota.NamaCustomer, &nota.CreatedDate)
-			if err != nil {
-				return nil, err
-			}
-		}
-
-		// QUERY BARANG
-		rowsStmtBarang, err := stmtBarang.Query(id)
-		if err != nil {
-			log.Println("QUERY BARANG TRANSAKSI ERROR: ", err.Error())
-			return nil, errors.New("gagal menampilkan BARANG transaksi")
-		}
-
-		for rowsStmtBarang.Next() {
-			var barang string
-			// SCAN BARANG
-			rowsStmtBarang.Scan(&barang)
-			nota.Barang = append(nota.Barang, barang)
-		}
-
-		listNota = append(listNota, nota)
-
+		listTransaksi = append(listTransaksi, transaksi)
 	}
 
-	return listNota, nil
+	return listTransaksi, nil
+}
+
+func (mt *MenuTransaksi) ListItemTransaction(id int) ([]TransaksiBarang, error) {
+	stmt, err := mt.DB.Prepare("SELECT tb.id_transaksi, b.id_barang, b.nama FROM transaksi_barang tb JOIN barang b ON b.id_barang = tb.id_barang WHERE tb.id_transaksi = ?")
+	if err != nil {
+		log.Println("PREPARE LIST ITEM TRANSACTION ERROR: ", err.Error())
+		return nil, errors.New("prepare list transaksi barang gagal")
+	}
+
+	rows, err := stmt.Query(id)
+	if err != nil {
+		log.Println("QUERY LIST ITEM TRANSACTION ERROR: ", err.Error())
+		return nil, errors.New("gagal menampilkan list nota  transaksi")
+	}
+
+	var listTransaksiBarang []TransaksiBarang
+	for rows.Next() {
+		transaksiBarang := TransaksiBarang{}
+		err := rows.Scan(&transaksiBarang.IDTransaksi, &transaksiBarang.IDBarang, &transaksiBarang.NamaBarang)
+		if err != nil {
+			return nil, err
+		}
+
+		listTransaksiBarang = append(listTransaksiBarang, transaksiBarang)
+	}
+
+	return listTransaksiBarang, nil
 }
 
 // Method hapus transaksi
