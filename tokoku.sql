@@ -17,6 +17,8 @@ create table pegawai (
     primary key(id_pegawai)
 );
 
+
+
 create table customer (
     id_customer int not null AUTO_INCREMENT,
     id_pegawai int not null,
@@ -24,6 +26,10 @@ create table customer (
     primary key(id_customer),
     foreign key(id_pegawai) references pegawai(id_pegawai)
 );
+
+ALTER TABLE tokoku.customer DROP FOREIGN KEY customer_ibfk_1;
+ALTER TABLE tokoku.customer ADD CONSTRAINT customer_ibfk_1 FOREIGN KEY (id_pegawai) REFERENCES tokoku.pegawai(id_pegawai) ON DELETE CASCADE ON UPDATE CASCADE;
+
 
 create table transaksi (
     id_transaksi int not null AUTO_INCREMENT,
@@ -35,6 +41,12 @@ create table transaksi (
     foreign key(id_customer) references customer(id_customer)
 );
 
+ALTER TABLE tokoku.transaksi DROP FOREIGN KEY transaksi_ibfk_1;
+ALTER TABLE tokoku.transaksi ADD CONSTRAINT transaksi_ibfk_1 FOREIGN KEY (id_pegawai) REFERENCES tokoku.pegawai(id_pegawai) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE tokoku.transaksi DROP FOREIGN KEY transaksi_ibfk_2;
+ALTER TABLE tokoku.transaksi ADD CONSTRAINT transaksi_ibfk_2 FOREIGN KEY (id_customer) REFERENCES tokoku.customer(id_customer) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
 create table barang (
     id_barang int not null AUTO_INCREMENT,
     id_pegawai int not null,
@@ -45,6 +57,10 @@ create table barang (
     foreign key(id_pegawai) references pegawai(id_pegawai)
 );
 
+ALTER TABLE tokoku.barang DROP FOREIGN KEY barang_ibfk_1;
+ALTER TABLE tokoku.barang ADD CONSTRAINT barang_ibfk_1 FOREIGN KEY (id_pegawai) REFERENCES tokoku.pegawai(id_pegawai) ON DELETE CASCADE ON UPDATE CASCADE;
+
+
 create table transaksi_barang (
     id_transaksi int not null,
     id_barang int not null,
@@ -52,4 +68,10 @@ create table transaksi_barang (
     foreign key(id_barang) references barang(id_barang),
     PRIMARY KEY(id_transaksi, id_barang)
 );
+
+ALTER TABLE tokoku.transaksi DROP FOREIGN KEY transaksi_ibfk_1;
+ALTER TABLE tokoku.transaksi ADD CONSTRAINT transaksi_ibfk_1 FOREIGN KEY (id_pegawai) REFERENCES tokoku.pegawai(id_pegawai) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE tokoku.transaksi DROP FOREIGN KEY transaksi_ibfk_2;
+ALTER TABLE tokoku.transaksi ADD CONSTRAINT transaksi_ibfk_2 FOREIGN KEY (id_customer) REFERENCES tokoku.customer(id_customer) ON DELETE CASCADE ON UPDATE CASCADE;
+
 
