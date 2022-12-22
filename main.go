@@ -64,7 +64,7 @@ func main() {
 					fmt.Println("5. Hapus Data Customer")
 					fmt.Println("6. Hapus Data Transaksi Barang")
 					fmt.Println("9. Logout")
-					fmt.Println("0. Exit")
+
 					fmt.Print("Masukkan Input: ")
 					fmt.Scanln(&inputMenu)
 
@@ -240,7 +240,7 @@ func main() {
 						for _, transaksiBarang := range listTransaksiBarang {
 							fmt.Println("-----------------------------------------------------")
 							fmt.Println("ID Transaksi: ", transaksiBarang.IDTransaksi)
-							fmt.Println("ID Pegawai: ", transaksiBarang.IDBarang)
+							fmt.Println("ID Barang: ", transaksiBarang.IDBarang)
 						}
 						fmt.Println()
 						fmt.Println("Total Data: ", len(listTransaksiBarang))
@@ -304,8 +304,6 @@ func main() {
 						}
 						fmt.Println()
 						fmt.Println("Total Data: ", len(listBarang))
-						fmt.Print("Press enter to return to the menu...")
-						fmt.Scanln()
 
 					case 2: // Tambah Barang
 						product := barang.Barang{}
@@ -390,8 +388,6 @@ func main() {
 						}
 						fmt.Println()
 						fmt.Println("Total Data: ", len(listCustomer))
-						fmt.Print("Press enter to return to the menu...")
-						fmt.Scanln()
 
 					case 6: // Tambah Customer
 						inputCustomer := customer.Customer{}
@@ -432,8 +428,6 @@ func main() {
 						}
 						fmt.Println()
 						fmt.Println("Total Data: ", len(listNota))
-						fmt.Print("Press enter to return to the menu...")
-						fmt.Scanln()
 
 					case 8: // Membuat Nota Transaksi
 						var (
