@@ -96,7 +96,7 @@ func main() {
 						fmt.Println()
 						fmt.Println("List Pegawai")
 						for _, pegawai := range listPegawai {
-							fmt.Println("-----------------------------------------------------")
+							fmt.Println("---------------------------------------")
 							fmt.Println("ID Pegawai: ", pegawai.ID)
 							fmt.Println("Nama Pegawai: ", pegawai.Username)
 							fmt.Println("Password: ", pegawai.Password)
@@ -130,7 +130,7 @@ func main() {
 						fmt.Println()
 						fmt.Println("List Barang")
 						for _, barang := range listBarang {
-							fmt.Println("-----------------------------------------------------")
+							fmt.Println("---------------------------------------")
 							fmt.Println("ID Barang: ", barang.ID)
 							fmt.Println("Nama Barang: ", barang.Nama)
 							fmt.Println("Stok Barang: ", barang.Stok)
@@ -166,14 +166,14 @@ func main() {
 						fmt.Println()
 						fmt.Println("List Transaksi")
 						for _, transaksi := range listTransaksi {
-							fmt.Println("-----------------------------------------------------")
-							fmt.Println("ID Transaksi: ", transaksi.ID)
-							fmt.Println("ID Pegawai: ", transaksi.NamaPegawai)
-							fmt.Println("ID Customer: ", transaksi.NamaCustomer)
-							fmt.Println("Tanggal dibuat: ", transaksi.CreatedDate)
+							fmt.Println("---------------------------------------")
+							fmt.Println("ID Transaksi\t: ", transaksi.ID)
+							fmt.Println("Nama Pegawai\t: ", transaksi.NamaPegawai)
+							fmt.Println("Nama Customer\t: ", transaksi.NamaCustomer)
+							fmt.Println("Tanggal dibuat\t: ", transaksi.CreatedDate)
 
 						}
-						fmt.Println()
+						fmt.Println("---------------------------------------")
 						fmt.Println("Total Data: ", len(listTransaksi))
 
 						// Fitur menghapus transaksi
@@ -300,7 +300,7 @@ func main() {
 							fmt.Println("Nama Pegawai\t: ", barang.NamaPegawai)
 							fmt.Println("Tanggal dibuat\t: ", barang.CreatedDate)
 						}
-						fmt.Println()
+						fmt.Println("---------------------------------------")
 						fmt.Println("Total Data: ", len(listBarang))
 						fmt.Print("Press enter to continue...")
 						fmt.Scanln()
@@ -354,7 +354,7 @@ func main() {
 							condition string
 						)
 
-						fmt.Print("Input (tambah / kurang): ")
+						fmt.Print("Input (tambah / kurang) Stok: ")
 						fmt.Scanln(&condition)
 						fmt.Print("Masukkan ID Barang: ")
 						fmt.Scanln(&id)
@@ -394,13 +394,14 @@ func main() {
 						fmt.Println()
 						fmt.Println("List Customer")
 						for _, customer := range listCustomer {
-							fmt.Println("-----------------------------------------------------")
-							fmt.Println("ID Customer: ", customer.ID)
-							fmt.Println("ID Pegawai: ", customer.IDPegawai)
-							fmt.Println("Nama Customer: ", customer.Nama)
+							fmt.Println("---------------------------------------")
+							fmt.Println("ID Customer\t: ", customer.ID)
+							fmt.Println("Nama Customer\t: ", customer.Nama)
 						}
-						fmt.Println()
+						fmt.Println("---------------------------------------")
 						fmt.Println("Total Data: ", len(listCustomer))
+						fmt.Print("Press enter to continue...")
+						fmt.Scanln()
 
 					case 6: // Tambah Customer
 						inputCustomer := customer.Customer{}
@@ -447,7 +448,7 @@ func main() {
 								fmt.Printf("%d.  %s\t%d\n", i+1, itemTransaction.NamaBarang, itemTransaction.Quantity)
 							}
 						}
-						fmt.Println()
+						fmt.Println("---------------------------------------")
 						fmt.Println("Total Data: ", len(listTransaction))
 						fmt.Print("Press enter to continue...")
 						fmt.Scanln()
@@ -466,8 +467,7 @@ func main() {
 						}
 						transaction.IDPegawai = employee.ID
 
-						fmt.Println(transaction)
-
+						// Membuat transaksi baru
 						transaction.ID, err = menuTransaksi.TambahTransaksi(transaction.IDPegawai, transaction.IDCustomer)
 						if err != nil {
 							fmt.Println(err)
