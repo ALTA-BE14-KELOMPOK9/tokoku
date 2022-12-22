@@ -161,23 +161,23 @@ func main() {
 					// List dan hapus data transaksi
 					case 4:
 						// List transaksi
-						listBarang, err := menuBarang.ListBarang()
+						listTransaksi, err := menuTransaksi.ListTransaksi()
 						if err != nil {
 							fmt.Println(err)
 						}
 
 						fmt.Println()
 						fmt.Println("List Pegawai")
-						for _, barang := range listBarang {
+						for _, transaksi := range listTransaksi {
 							fmt.Println("-----------------------------------------------------")
-							fmt.Println("ID Barang: ", barang.ID)
-							fmt.Println("Nama Barang: ", barang.Nama)
-							fmt.Println("Stok Barang: ", barang.Stok)
-							fmt.Println("Nama Pegawai: ", barang.NamaPegawai)
-							fmt.Println("Tanggal dibuat: ", barang.CreatedDate)
+							fmt.Println("ID Transaksi: ", transaksi.ID)
+							fmt.Println("ID Pegawai: ", transaksi.IDPegawai)
+							fmt.Println("ID Customer: ", transaksi.IDCustomer)
+							fmt.Println("Tanggal dibuat: ", transaksi.CreatedDate)
+
 						}
 						fmt.Println()
-						fmt.Println("Total Data: ", len(listBarang))
+						fmt.Println("Total Data: ", len(listTransaksi))
 
 						// Fitur menghapus barang
 						var id_barang int
