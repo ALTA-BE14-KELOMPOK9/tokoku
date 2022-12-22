@@ -46,7 +46,7 @@ func (mp *MenuPegawai) ListPegawai() ([]Pegawai, error) {
 	stmt, err := mp.DB.Prepare("select * from pegawai")
 	if err != nil {
 		log.Println("Prepare list pegawai gagal: ", err.Error())
-		return []Pegawai{}, errors.New("prepare login gagal")
+		return []Pegawai{}, errors.New("prepare list gagal")
 	}
 
 	rows, err := stmt.Query()

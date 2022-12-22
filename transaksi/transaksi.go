@@ -35,9 +35,33 @@ type MenuTransaksi struct {
 	DB *sql.DB
 }
 
-func (mt *MenuTransaksi) ListTransaksi() ([]TransaksiBarang, error) {
-	// stmt, err := mt.DB.Prepare()
-	return nil, nil
+// Method list transaksi
+func (mt *MenuTransaksi) ListTransaksi() ([]Transaksi, error) {
+	stmt, err := mt.DB.Prepare("select * from transaksi")
+	if err != nil {
+		log.Println("Prepare list transaksi gagal: ", err.Error())
+		return nil, errors.New("prepare list gagal")
+	}
+
+	rows, err := stmt.Query()
+	if err != nil {
+		log.Println("Query list pegawai gagal: ", err.Error())
+		return nil, errors.New("gagal menampilkan list")
+	}
+
+	var listTransaksi []Transaksi
+	for rows.Next() {
+		transaksi := Transaksi{}
+		err = rows.Scan(&transaksi.ID, &transaksi.IDPegawai, &transaksi.IDCustomer, &transaksi.CreatedDate)
+		if err != nil {
+			log.Println("Scan List transaksi gagal: ", err.Error())
+			return nil, errors.New("data tidak ditemukan")
+		}
+
+		listTransaksi = append(listTransaksi, transaksi)
+	}
+
+	return listTransaksi, nil
 }
 
 func (mt *MenuTransaksi) TambahTransaksi(idPegawai int, idCustomer int) (int, error) {

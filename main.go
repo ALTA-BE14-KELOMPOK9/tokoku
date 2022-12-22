@@ -90,7 +90,7 @@ func main() {
 
 					// List dan hapus data pegawai
 					case 2:
-
+						// List Pegawai
 						listPegawai, err := menuPegawai.ListPegawai()
 						if err != nil {
 							fmt.Println(err)
@@ -124,6 +124,43 @@ func main() {
 						}
 					// List dan Hapus Data Barang
 					case 3:
+						// List Barang
+						listBarang, err := menuBarang.ListBarang()
+						if err != nil {
+							fmt.Println(err)
+						}
+
+						fmt.Println()
+						fmt.Println("List Pegawai")
+						for _, barang := range listBarang {
+							fmt.Println("-----------------------------------------------------")
+							fmt.Println("ID Barang: ", barang.ID)
+							fmt.Println("Nama Barang: ", barang.Nama)
+							fmt.Println("Stok Barang: ", barang.Stok)
+							fmt.Println("Nama Pegawai: ", barang.NamaPegawai)
+							fmt.Println("Tanggal dibuat: ", barang.CreatedDate)
+						}
+						fmt.Println()
+						fmt.Println("Total Data: ", len(listBarang))
+
+						// Fitur menghapus barang
+						var id_barang int
+						fmt.Print("Masukkan ID Barang yang akan dihapus: ")
+						fmt.Scanln(&id_barang)
+
+						hapusBarang, err := menuBarang.HapusBarang(id_barang)
+						if err != nil {
+							fmt.Println(err)
+						}
+
+						if hapusBarang > 0 {
+							fmt.Println("Hapus barang berhasil")
+						} else {
+							fmt.Println("Hapus barang gagal")
+						}
+					// List dan hapus data transaksi
+					case 4:
+						// List transaksi
 						listBarang, err := menuBarang.ListBarang()
 						if err != nil {
 							fmt.Println(err)
