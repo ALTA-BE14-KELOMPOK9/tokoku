@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"tokoku/barang"
 	"tokoku/config"
 	"tokoku/customer"
@@ -69,27 +68,26 @@ func main() {
 					fmt.Scanln(&inputMenu)
 
 					switch inputMenu {
-					// Mendaftarkan Pegawai
-					case 1:
-						var (
-							username string
-							password string
-						)
+
+					case 1: // Mendaftarkan Pegawai
+						pegawai := pegawai.Pegawai{}
 
 						fmt.Print("Masukkan Username Pegawai: ")
-						fmt.Scanln(&username)
+						fmt.Scanln(&pegawai.Username)
 						fmt.Print("Masukkan Password Pegawai: ")
-						fmt.Scanln(&password)
+						fmt.Scanln(&pegawai.Password)
 
-						result, err := db.Exec("INSERT INTO pegawai(username, password) VALUES(?, ?)", username, password)
+						rowAffected, err := menuPegawai.DaftarPegawai(pegawai)
 						if err != nil {
-							log.Println("Tambah pegawai gagal", err.Error())
+							fmt.Println(err)
+							continue
 						}
 
-						fmt.Println(result.RowsAffected())
+						if rowAffected > 0 {
+							fmt.Println("Berhasil mendaftarkan pegawai baru!")
+						}
 
-					// List dan hapus data pegawai
-					case 2:
+					case 2: // List dan hapus data pegawai
 						// List Pegawai
 						listPegawai, err := menuPegawai.ListPegawai()
 						if err != nil {
