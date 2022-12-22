@@ -17,7 +17,7 @@ type MenuPegawai struct {
 	DB *sql.DB
 }
 
-// Method Pegawai
+// Method Login
 func (mp *MenuPegawai) Login(username string, password string) (Pegawai, error) {
 	stmt, err := mp.DB.Prepare("SELECT id_pegawai, username FROM pegawai WHERE username = ? AND password = ?")
 	if err != nil {
@@ -39,6 +39,46 @@ func (mp *MenuPegawai) Login(username string, password string) (Pegawai, error) 
 	}
 
 	return pegawai, nil
+}
+
+// Method Check Duplicate
+func (mp *MenuPegawai) CheckDuplicate(username string) bool {
+	row := mp.DB.QueryRow("SELECT id_pegawai FROM pegawai WHERE username = ?", username)
+
+	var id int
+	if err := row.Scan(&id); err != nil {
+		return false
+	}
+
+	return true
+}
+
+// Method Daftar Pegawai
+func (mp *MenuPegawai) DaftarPegawai(pegawai Pegawai) (int, error) {
+	// Check username pegawai
+	if mp.CheckDuplicate(pegawai.Username) {
+		log.Println("PEGAWAI DUPLICATE")
+		return 0, errors.New("username sudah terdaftar")
+	}
+
+	stmt, err := mp.DB.Prepare("INSERT INTO pegawai(username, password) VALUES(?,?)")
+	if err != nil {
+		log.Println("PREPARE DAFTAR PEGAWAI STATEMENT ERROR: ", err.Error())
+		return 0, errors.New("gagal mendaftarkan pegawai")
+	}
+
+	result, err := stmt.Exec(pegawai.Username, pegawai.Password)
+	if err != nil {
+		log.Println("EXEC DAFTAR PEGAWAI ERROR: ", err.Error())
+		return 0, errors.New("gagal mendaftarkan pegawai")
+	}
+
+	rowAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, errors.New("gagal mendaftarkan pegawai")
+	}
+
+	return int(rowAffected), nil
 }
 
 // Method List Pegawai
