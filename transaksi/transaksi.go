@@ -178,3 +178,22 @@ func (mt *MenuTransaksi) ListNotaTransaksi() ([]Nota, error) {
 
 	return listNota, nil
 }
+
+// Method hapus transaksi
+func (mt *MenuTransaksi) HapusTransaksi(id_barang int) (int, error) {
+
+	stmt, err := mt.DB.Prepare("delete from transaksi where id_transaksi=?")
+	if err != nil {
+		log.Println("Hapus Barang gagal: ", err.Error())
+		return 0, errors.New("gagal hapus barang")
+	}
+
+	result, err := stmt.Exec(id_barang)
+	if err != nil {
+		log.Println("Gagal hapus data", err.Error())
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	return int(rowsAffected), nil
+
+}

@@ -161,9 +161,9 @@ func (mb *MenuBarang) CariBarang(nama string) (int, error) {
 }
 
 // Method hapus barang
-func (hp *MenuBarang) HapusBarang(id_barang int) (int, error) {
+func (mb *MenuBarang) HapusBarang(id_barang int) (int, error) {
 
-	stmt, err := hp.DB.Prepare("delete from barang where id_barang=?")
+	stmt, err := mb.DB.Prepare("delete from barang where id_barang=?")
 	if err != nil {
 		log.Println("Hapus Barang gagal: ", err.Error())
 		return 0, errors.New("gagal hapus barang")

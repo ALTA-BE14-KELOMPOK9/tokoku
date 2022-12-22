@@ -71,9 +71,9 @@ func (mp *MenuPegawai) ListPegawai() ([]Pegawai, error) {
 }
 
 // Method Hapus Pegawai
-func (hp *MenuPegawai) HapusPegawai(id_pegawai int) (int, error) {
+func (mp *MenuPegawai) HapusPegawai(id_pegawai int) (int, error) {
 
-	stmt, err := hp.DB.Prepare("delete from pegawai where id_pegawai=?")
+	stmt, err := mp.DB.Prepare("delete from pegawai where id_pegawai=?")
 	if err != nil {
 		log.Println("Hapus pegawai gagal: ", err.Error())
 		return 0, errors.New("gagal hapus pegawai")
