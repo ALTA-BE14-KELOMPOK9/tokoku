@@ -15,7 +15,7 @@ func main() {
 	cfg := config.ReadConfig()
 	db := config.OpenConnection(*cfg)
 
-	// Setup Service
+	// Setup Objek Menu
 	menuPegawai := pegawai.MenuPegawai{DB: db}
 	menuBarang := barang.MenuBarang{DB: db}
 	menuCustomer := customer.MenuCustomer{DB: db}
@@ -50,7 +50,6 @@ func main() {
 			}
 
 			if employee.Username == "admin" {
-
 				// Menu Admin
 				isLogin := true
 				for isLogin {
@@ -120,8 +119,8 @@ func main() {
 						} else {
 							fmt.Println("Hapus pegawai gagal")
 						}
-					// List dan Hapus Data Barang
-					case 3:
+
+					case 3: // List dan Hapus Data Barang
 						// List Barang
 						listBarang, err := menuBarang.ListBarang()
 						if err != nil {
@@ -156,8 +155,8 @@ func main() {
 						} else {
 							fmt.Println("Hapus barang gagal")
 						}
-					// List dan hapus data transaksi
-					case 4:
+
+					case 4: // List dan hapus data transaksi
 						// List transaksi
 						listTransaksi, err := menuTransaksi.ListTransaksi()
 						if err != nil {
@@ -192,8 +191,8 @@ func main() {
 						} else {
 							fmt.Println("Hapus transaksi gagal")
 						}
-					// List dan Hapus data customer
-					case 5:
+
+					case 5: // List dan Hapus data customer
 						// List customer
 						listCustomer, err := menuCustomer.ListCustomer()
 						if err != nil {
@@ -226,7 +225,8 @@ func main() {
 						} else {
 							fmt.Println("Hapus customer gagal")
 						}
-					case 6:
+
+					case 6: // List dan Hapus data transaksi barang
 						// List transaksi barang
 						listTransaksiBarang, err := menuTransaksi.ListTransaksiBarang()
 						if err != nil {
@@ -259,14 +259,14 @@ func main() {
 							fmt.Println("Hapus transaksi gagal")
 						}
 
-					// logout
-					case 9:
+					case 9: // Logout
 						isLogin = false
+						employee = pegawai.Pegawai{}
 					}
 				}
 
 			} else {
-				// PEGAWAI BIASA
+				// MENU PEGAWAI
 				isLogin = true
 				for isLogin {
 					fmt.Println()
@@ -352,16 +352,29 @@ func main() {
 							condition string
 						)
 
-						fmt.Print("Input [tambah / kurang]: ")
+						fmt.Print("Input (tambah / kurang): ")
 						fmt.Scanln(&condition)
 						fmt.Print("Masukkan ID Barang: ")
 						fmt.Scanln(&id)
 						fmt.Print("Masukkan Stok Barang: ")
 						fmt.Scanln(&quantity)
 
-						res, err := menuBarang.UbahStokBarang(id, quantity, condition)
-						if err != nil {
-							fmt.Println(err)
+						var res int
+						if condition == "tambah" {
+							res, err = menuBarang.TambahStokBarang(id, quantity)
+							if err != nil {
+								fmt.Println(err)
+								continue
+							}
+						} else if condition == "kurang" {
+							res, err = menuBarang.KurangiStokBarang(id, quantity)
+							if err != nil {
+								fmt.Println(err)
+								continue
+							}
+						} else {
+							fmt.Println("Only accept (kurang / tambah) input")
+							continue
 						}
 
 						if res > 0 {
@@ -405,106 +418,115 @@ func main() {
 							fmt.Println("Gagal menambahkan customer!")
 						}
 
-					case 7: // Tampil List Nota
-						listNota, err := menuTransaksi.ListNotaTransaksi()
+					case 7: // Tampil List Transaksi
+						listTransaction, err := menuTransaksi.ListTransaction()
 						if err != nil {
 							fmt.Println(err)
+							continue
 						}
 
 						fmt.Println()
-						fmt.Println("List Nota Transaksi")
-						for _, nota := range listNota {
+						fmt.Println("List Transaksi")
+						for _, transaction := range listTransaction {
 							fmt.Println("-----------------------------------------------------")
-							fmt.Println("ID Transaksi: ", nota.IDTransaksi)
-							fmt.Println("Nama Pegawai: ", nota.NamaPegawai)
-							fmt.Println("Nama Customer: ", nota.NamaCustomer)
-							fmt.Println("Tanggal Dibuat: ", nota.CreatedDate)
-							fmt.Println("Barang transaksi: ")
-							for i, barang := range nota.Barang {
-								fmt.Printf("%d. %s\n", i+1, barang)
+							fmt.Println("ID Transaksi: ", transaction.ID)
+							fmt.Println("Nama Pegawai: ", transaction.NamaPegawai)
+							fmt.Println("Nama Customer: ", transaction.NamaCustomer)
+							fmt.Println("Tanggal Dibuat: ", transaction.CreatedDate)
+
+							// Barang
+							listItemTransaction, err := menuTransaksi.ListItemTransaction(transaction.ID)
+							fmt.Println("Barang transaksi: ", len(listItemTransaction))
+							if err != nil {
+								break
+							}
+							for i, itemTransaction := range listItemTransaction {
+								fmt.Printf("%d. %s\n", i+1, itemTransaction.NamaBarang)
 							}
 						}
 						fmt.Println()
-						fmt.Println("Total Data: ", len(listNota))
+						fmt.Println("Total Data: ", len(listTransaction))
+						fmt.Print("Press enter to continue...")
+						fmt.Scanln()
 
 					case 8: // Membuat Nota Transaksi
-						var (
-							namaCustomer string
-							idCustomer   int
-							listIdBarang []int
-							listQuantity []int
-						)
+						// var (
+						// 	namaCustomer string
+						// 	idCustomer   int
+						// 	listIdBarang []int
+						// 	listQuantity []int
+						// )
 
-						// Ambil nama customer
-						fmt.Print("Masukkan Nama Customer: ")
-						fmt.Scanln(&namaCustomer)
-						idCustomer, err = menuCustomer.CariCustomer(namaCustomer)
-						if err != nil {
-							fmt.Println(err)
-							continue
-						}
+						// // Ambil nama customer
+						// fmt.Print("Masukkan Nama Customer: ")
+						// fmt.Scanln(&namaCustomer)
+						// idCustomer, err = menuCustomer.CariCustomer(namaCustomer)
+						// if err != nil {
+						// 	fmt.Println(err)
+						// 	continue
+						// }
 
-						// Ambil data barang
-						inputTransaksi := 1
-						for inputTransaksi != 0 {
-							fmt.Println("Tambahkan Barang: ")
-							fmt.Println("1. Tambahkan barang")
-							fmt.Println("0. Selesai")
-							fmt.Print("Masukkan Input: ")
-							fmt.Scanln(&inputTransaksi)
+						// // Ambil data barang
+						// inputTransaksi := 1
+						// for inputTransaksi != 0 {
+						// 	fmt.Println("Tambahkan Barang: ")
+						// 	fmt.Println("1. Tambahkan barang")
+						// 	fmt.Println("0. Selesai")
+						// 	fmt.Print("Masukkan Input: ")
+						// 	fmt.Scanln(&inputTransaksi)
 
-							if inputTransaksi == 1 {
-								var namaBarang string
-								var quantity int
-								fmt.Print("Masukkan nama barang: ")
-								fmt.Scanln(&namaBarang)
-								fmt.Print("Masukkan jumlah barang: ")
-								fmt.Scanln(&quantity)
+						// 	if inputTransaksi == 1 {
+						// 		var namaBarang string
+						// 		var quantity int
+						// 		fmt.Print("Masukkan nama barang: ")
+						// 		fmt.Scanln(&namaBarang)
+						// 		fmt.Print("Masukkan jumlah barang: ")
+						// 		fmt.Scanln(&quantity)
 
-								id, err := menuBarang.CariBarang(namaBarang)
-								if err != nil {
-									fmt.Println(err)
-									continue
-								}
+						// 		id, err := menuBarang.CariBarang(namaBarang)
+						// 		if err != nil {
+						// 			fmt.Println(err)
+						// 			continue
+						// 		}
 
-								listIdBarang = append(listIdBarang, id)
-								listQuantity = append(listQuantity, quantity)
-							}
-						}
+						// 		listIdBarang = append(listIdBarang, id)
+						// 		listQuantity = append(listQuantity, quantity)
+						// 	}
+						// }
 
-						// Tambah Transaksi
-						idTransaksi, err := menuTransaksi.TambahTransaksi(employee.ID, idCustomer)
-						if err != nil {
-							fmt.Println(err)
-							continue
-						}
+						// // Tambah Transaksi
+						// idTransaksi, err := menuTransaksi.TambahTransaksi(employee.ID, idCustomer)
+						// if err != nil {
+						// 	fmt.Println(err)
+						// 	continue
+						// }
 
-						res := 0 // Jumlah barang yang berhasil ditambah
-						// Tambah Transaksi Barang
-						for i := range listIdBarang {
-							err := menuTransaksi.TambahTransaksiBarang(idTransaksi, listIdBarang[i])
-							if err != nil {
-								fmt.Println(err)
-								break
-							}
+						// res := 0 // Jumlah barang yang berhasil ditambah
+						// // Tambah Transaksi Barang
+						// for i := range listIdBarang {
+						// 	err := menuTransaksi.TambahTransaksiBarang(idTransaksi, listIdBarang[i])
+						// 	if err != nil {
+						// 		fmt.Println(err)
+						// 		break
+						// 	}
 
-							// Kurangi barang ketika berhasil menambah barang ke transaksi
-							_, err = menuBarang.UbahStokBarang(listIdBarang[i], listQuantity[i], "kurang")
-							if err != nil {
-								fmt.Println(err)
-								break
-							}
+						// 	// Kurangi barang ketika berhasil menambah barang ke transaksi
+						// 	_, err = menuBarang.UbahStokBarang(listIdBarang[i], listQuantity[i], "kurang")
+						// 	if err != nil {
+						// 		fmt.Println(err)
+						// 		break
+						// 	}
 
-							res++
-						}
+						// 	res++
+						// }
 
-						if res > 0 {
-							fmt.Println("Berhasil menambahkan transaksi barang!")
-						} else {
-							fmt.Println("Gagal menambahkan transaksi barang!")
-						}
+						// if res > 0 {
+						// 	fmt.Println("Berhasil menambahkan transaksi barang!")
+						// } else {
+						// 	fmt.Println("Gagal menambahkan transaksi barang!")
+						// }
 
-					case 9:
+					case 9: // Logout
 						isLogin = false
 						employee = pegawai.Pegawai{}
 					}
