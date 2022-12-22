@@ -69,9 +69,36 @@ create table transaksi_barang (
     PRIMARY KEY(id_transaksi, id_barang)
 );
 
+-- ALTER 
+ALTER TABLE tokoku.customer DROP FOREIGN KEY customer_ibfk_1;
+ALTER TABLE tokoku.customer 
+ADD CONSTRAINT customer_ibfk_1 FOREIGN KEY (id_pegawai) REFERENCES tokoku.pegawai(id_pegawai) 
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE tokoku.barang DROP FOREIGN KEY barang_ibfk_1;
+ALTER TABLE tokoku.barang 
+ADD CONSTRAINT barang_ibfk_1 FOREIGN KEY (id_pegawai) REFERENCES tokoku.pegawai(id_pegawai) 
+ON DELETE CASCADE ON UPDATE CASCADE;
+
 ALTER TABLE tokoku.transaksi DROP FOREIGN KEY transaksi_ibfk_1;
-ALTER TABLE tokoku.transaksi ADD CONSTRAINT transaksi_ibfk_1 FOREIGN KEY (id_pegawai) REFERENCES tokoku.pegawai(id_pegawai) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE tokoku.transaksi 
+ADD CONSTRAINT transaksi_ibfk_1 FOREIGN KEY (id_pegawai) REFERENCES tokoku.pegawai(id_pegawai) 
+ON DELETE CASCADE ON UPDATE CASCADE;
+
 ALTER TABLE tokoku.transaksi DROP FOREIGN KEY transaksi_ibfk_2;
-ALTER TABLE tokoku.transaksi ADD CONSTRAINT transaksi_ibfk_2 FOREIGN KEY (id_customer) REFERENCES tokoku.customer(id_customer) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE tokoku.transaksi 
+ADD CONSTRAINT transaksi_ibfk_2 FOREIGN KEY (id_customer) REFERENCES tokoku.customer(id_customer) 
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE tokoku.transaksi_barang DROP FOREIGN KEY transaksi_barang_ibfk_1;
+ALTER TABLE tokoku.transaksi_barang 
+ADD CONSTRAINT transaksi_barang_ibfk_1 FOREIGN KEY (id_transaksi) REFERENCES tokoku.transaksi(id_transaksi) 
+ON DELETE CASCADE ON UPDATE CASCADE;
+
+
+ALTER TABLE tokoku.transaksi_barang DROP FOREIGN KEY transaksi_barang_ibfk_2;
+ALTER TABLE tokoku.transaksi_barang 
+ADD CONSTRAINT transaksi_barang_ibfk_2 FOREIGN KEY (id_barang) REFERENCES tokoku.barang(id_barang) 
+ON DELETE CASCADE ON UPDATE CASCADE;
 
 
