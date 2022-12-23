@@ -128,7 +128,7 @@ func (mt *MenuTransaksi) ListTransaksiBarang() ([]TransaksiBarang, error) {
 	var listTransaksiBarang []TransaksiBarang
 	for rows.Next() {
 		transaksiBarang := TransaksiBarang{}
-		err = rows.Scan(&transaksiBarang.IDTransaksi, &transaksiBarang.IDBarang)
+		err = rows.Scan(&transaksiBarang.IDTransaksi, &transaksiBarang.IDBarang, &transaksiBarang.NamaBarang)
 		if err != nil {
 			log.Println("Scan List transaksi gagal: ", err.Error())
 			return nil, errors.New("data tidak ditemukan")

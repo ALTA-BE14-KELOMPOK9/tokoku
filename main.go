@@ -203,9 +203,9 @@ func main() {
 						fmt.Println("List Customer")
 						for _, customer := range listCustomer {
 							fmt.Println("-----------------------------------------------------")
-							fmt.Println("ID Transaksi: ", customer.ID)
+							fmt.Println("ID Customer: ", customer.ID)
 							fmt.Println("ID Pegawai: ", customer.IDPegawai)
-							fmt.Println("ID Customer: ", customer.Nama)
+							fmt.Println("Nama Customer: ", customer.Nama)
 						}
 						fmt.Println()
 						fmt.Println("Total Data: ", len(listCustomer))
