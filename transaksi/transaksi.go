@@ -112,14 +112,14 @@ func (mt *MenuTransaksi) ListTransaksiBarang() ([]TransaksiBarang, error) {
 	return listTransaksiBarang, nil
 }
 
-func (mt *MenuTransaksi) TambahTransaksi(idPegawai int, idCustomer int) (int, error) {
+func (mt *MenuTransaksi) TambahTransaksi(transaksi Transaksi) (int, error) {
 	stmt, err := mt.DB.Prepare("INSERT INTO transaksi(id_pegawai, id_customer) VALUES(?, ?)")
 	if err != nil {
 		log.Println("PREPARE TAMBAH TRANSAKSI ERROR: ", err.Error())
 		return 0, errors.New("prepare tambah transaksi gagal")
 	}
 
-	result, err := stmt.Exec(idPegawai, idCustomer)
+	result, err := stmt.Exec(transaksi.IDPegawai, transaksi.IDCustomer)
 	if err != nil {
 		log.Println("EXEC TAMBAH TRANSAKSI ERROR: ", err.Error())
 		return 0, errors.New("gagal menambahkan transaksi")

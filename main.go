@@ -422,6 +422,7 @@ func main() {
 						}
 
 					case 7: // Tampil List Transaksi
+						// Get all transaction
 						listTransaction, err := menuTransaksi.ListTransaction()
 						if err != nil {
 							fmt.Println(err)
@@ -437,7 +438,7 @@ func main() {
 							fmt.Println("Nama Customer\t: ", transaction.NamaCustomer)
 							fmt.Println("Tanggal Dibuat\t: ", transaction.CreatedDate)
 
-							// Barang
+							// Get all item transaction
 							listItemTransaction, err := menuTransaksi.ListItemTransaction(transaction.ID)
 							if err != nil {
 								break
@@ -455,7 +456,6 @@ func main() {
 
 					case 8: // Membuat Transaksi
 						transaction := transaksi.Transaksi{}
-						itemTransaction := transaksi.TransaksiBarang{}
 
 						fmt.Print("Masukkan Nama Customer: ")
 						fmt.Scanln(&transaction.NamaCustomer)
@@ -468,7 +468,7 @@ func main() {
 						transaction.IDPegawai = employee.ID
 
 						// Membuat transaksi baru
-						transaction.ID, err = menuTransaksi.TambahTransaksi(transaction.IDPegawai, transaction.IDCustomer)
+						transaction.ID, err = menuTransaksi.TambahTransaksi(transaction)
 						if err != nil {
 							fmt.Println(err)
 							continue
@@ -490,6 +490,7 @@ func main() {
 							if inputMenu == 1 {
 								var (
 									nama     string
+									idBarang int
 									quantity int
 								)
 								fmt.Print("Masukkan nama barang: ")
@@ -498,21 +499,21 @@ func main() {
 								fmt.Scanln(&quantity)
 
 								// Cari id barang
-								itemTransaction.IDBarang, err = menuBarang.CariBarang(nama)
+								idBarang, err = menuBarang.CariBarang(nama)
 								if err != nil {
 									fmt.Println(err)
 									continue
 								}
 
 								// Tambah transaksi barang dengan id transaksi dan id barang
-								err = menuTransaksi.TambahTransaksiBarang(transaction.ID, itemTransaction.IDBarang, quantity)
+								err = menuTransaksi.TambahTransaksiBarang(transaction.ID, idBarang, quantity)
 								if err != nil {
 									fmt.Println(err)
 									continue
 								}
 
 								// Kurangi stok barang ketika transaksi barang berhasil
-								_, err = menuBarang.KurangiStokBarang(itemTransaction.IDBarang, quantity)
+								_, err = menuBarang.KurangiStokBarang(idBarang, quantity)
 								if err != nil {
 									fmt.Println(err)
 									continue
